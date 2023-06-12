@@ -7,8 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.ticker as ticker
 import numpy as np
 import math
-from sympy import symbols, Poly, Eq, solve
-import sympy as sp
+
 
 # inicjowanie zmiennych globalnych
 type_function = ""
