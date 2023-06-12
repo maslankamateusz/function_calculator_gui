@@ -446,14 +446,7 @@ def po_calculations(rounded_zeros):
         frame_calculations, text=f"Miejsca zerowe wielomianu to: {rounded_zeros}", font=input_font_2, width=100, anchor="w", justify="left")
     function_root.grid(row=1, column=0)
     created_widgets.append(function_root)
-    '''
-    monotonicity_label = tk.Label(
-        frame_calculations, text=f"Funkcja jest na całej swojej dziedzinie.", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
-    monotonicity_label.grid(row=3, column=0)
-    created_widgets.append(monotonicity_label)
-    '''
-    
-
+     
 # funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla wielomianów
 
 
