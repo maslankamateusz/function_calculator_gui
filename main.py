@@ -17,6 +17,7 @@ created_widgets = []
 entry_list = []
 value_x_min = 0
 value_x_max = 0
+coefficients = [0,0,0,0,0,0,0,0]
 
 
 # konfiguracja root
@@ -79,12 +80,11 @@ def show_poly_degree_input():
     destroy_widgets()  # i obliczenia
 
 # funkcja do obliczania pola pod wykresem dla funkcji liniowej
-
-
 def area_under_plot(value_a, value_b):
     area_under_plot_label = tk.Label(
         frame_calculations, text="Pole pod wykresem", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
     created_widgets.append(area_under_plot_label)
+    #obliczenie całki z funkcji liniowej i podłożenie za x x_max i odjęcie x_min
     area = value_a*value_x_max**2/2+value_b*value_x_max - \
         value_a*value_x_min**2/2-value_b*value_x_min
     area_under_plot_output = tk.Label(
@@ -230,7 +230,7 @@ def linear_processing():
 
 # funkcja do obliczania pola pod wykresem dla funkcji kwadratowej
 def sq_area_under_plot(value_x_min, value_x_max, value_a, value_b, value_c):
-
+    #obliczenie całki z funkcji kwadratowej i podłożenie za x x_max i odjęcie x_min
     area_under_field_value = value_a * value_x_max ** 3 / 3 + value_b * value_x_max ** 2 / 2 + \
         value_c * value_x_max - value_a * value_x_max ** 3 / 3 - \
         value_b * value_x_min ** 2 / 2 - value_c * value_x_min
@@ -430,13 +430,15 @@ def calculate_zeros(coefficients):
     real_zeros = [zero for zero in zeros if np.isreal(zero)]
     rounded_zeros = [round(zero.real, 2) for zero in real_zeros]
 
-    po_calculations(rounded_zeros)
+    po_calculations(rounded_zeros, coefficients)
 
 
 # Dodatkowe obliczenia dla wielomianów
-def po_calculations(rounded_zeros):
+def po_calculations(rounded_zeros, coefficients):
 
-       
+    x_max = 1
+    x_min = -1
+    area_under_plot = coefficients[0] * x_max ** 8 / 8 + coefficients[1] * x_max ** 7 / 7 + coefficients[2] * x_max ** 6 / 6 + coefficients[3] * x_max ** 5 / 5 + coefficients[4] * x_max ** 4 / 4 + coefficients[5] * x_max ** 3 / 3 + coefficients[6] * x_max ** 2 / 2 + coefficients[7] * x_max - (coefficients[0] * x_min ** 8 / 8 + coefficients[1] * x_min ** 7 / 7 + coefficients[2] * x_min ** 6 / 6 + coefficients[3] * x_min ** 5 / 5 + coefficients[4] * x_min ** 4 / 4 + coefficients[5] * x_min ** 3 / 3 + coefficients[6] * x_min ** 2 / 2 + coefficients[7] * x_min)
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
     root_label.grid(row=0, column=0)
@@ -446,7 +448,14 @@ def po_calculations(rounded_zeros):
         frame_calculations, text=f"Miejsca zerowe wielomianu to: {rounded_zeros}", font=input_font_2, width=100, anchor="w", justify="left")
     function_root.grid(row=1, column=0)
     created_widgets.append(function_root)
-     
+    
+    area_under_plot_label = tk.Label(
+        frame_calculations, text=f"Pole pod wykresem dla wielomianu w przedziale ({x_min}; {x_max}) = {area_under_plot}", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
+    area_under_plot_label.grid(row=3, column=0)
+    created_widgets.append(area_under_plot_label)
+    
+    
+
 # funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla wielomianów
 
 
@@ -460,8 +469,8 @@ def po_values_processing(poly_degree, x_range, y_range):
         y_range = 10
     x_range = int(x_range)
     y_range = int(y_range)
-    coefficients = []
-
+    global coefficient
+   
     for i in range(poly_degree):
         entry_value = entry_list[i].get()
         if not entry_value or not (entry_value.replace(".", "", 1).isdigit() or entry_value.replace("-", "", 1).replace(".", "", 1).isdigit()):
@@ -469,9 +478,11 @@ def po_values_processing(poly_degree, x_range, y_range):
                 "Błąd", "Jedna z wartości nie jest liczbą lub jest pusta.")
             return
         coefficient = float(entry_value)
-        coefficients.append(coefficient)
+        coefficients[i] = coefficient
     calculate_zeros(coefficients)
     generate_polynomial_plot(coefficients, x_range, y_range)
+    print(coefficients)
+    
 
 
 # Zmienianie zakresu wykresu
@@ -782,7 +793,6 @@ def generate_polynomial_plot(coefficients, x_range, y_range):
     canvas = FigureCanvasTkAgg(figure, master=root)
     canvas.draw()
     draw_plot(canvas)
-
 
 # ukrywanie frame'ów po rozpoczęciu programu
 hide_frame(frame_linear_input)
