@@ -426,14 +426,24 @@ def values_processing(type_function, x_range, y_range):
         po_values_processing(poly_degree, x_range, y_range)
 
 
-def po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, rounded_zeros, coefficients):
+def po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, coefficients):
     global value_x_max
     global value_x_min
 
     value_x_min = float(value_x_min_input.get())
     value_x_max = float(value_x_max_input.get())
-
-    po_calculations(value_x_max, value_x_min, rounded_zeros, coefficients)
+    x_max = value_x_max
+    x_min = value_x_min
+    
+    area_under_plot = coefficients[0] * x_max ** 8 / 8 + coefficients[1] * x_max ** 7 / 7 + coefficients[2] * x_max ** 6 / 6 + coefficients[3] * x_max ** 5 / 5 + coefficients[4] * x_max ** 4 / 4 + coefficients[5] * x_max ** 3 / 3 + coefficients[6] * x_max ** 2 / 2 + coefficients[7] * \
+        x_max - (coefficients[0] * x_min ** 8 / 8 + coefficients[1] * x_min ** 7 / 7 + coefficients[2] * x_min ** 6 / 6 + coefficients[3] * x_min **
+                 5 / 5 + coefficients[4] * x_min ** 4 / 4 + coefficients[5] * x_min ** 3 / 3 + coefficients[6] * x_min ** 2 / 2 + coefficients[7] * x_min)
+    
+    
+    area_under_plot_label = tk.Label(
+        frame_calculations, text=f"Pole pod wykresem dla wielomianu w przedziale ({value_x_min}; {value_x_max}) = {area_under_plot}", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
+    area_under_plot_label.grid(row=6, column=0, pady=50)
+    created_widgets.append(area_under_plot_label)
 
 
 # Funkcja do obliczania miejsc zerowych dla wielomianów
@@ -451,9 +461,6 @@ def po_calculations(x_max, x_min, rounded_zeros, coefficients):
 
     
 
-    area_under_plot = coefficients[0] * x_max ** 8 / 8 + coefficients[1] * x_max ** 7 / 7 + coefficients[2] * x_max ** 6 / 6 + coefficients[3] * x_max ** 5 / 5 + coefficients[4] * x_max ** 4 / 4 + coefficients[5] * x_max ** 3 / 3 + coefficients[6] * x_max ** 2 / 2 + coefficients[7] * \
-        x_max - (coefficients[0] * x_min ** 8 / 8 + coefficients[1] * x_min ** 7 / 7 + coefficients[2] * x_min ** 6 / 6 + coefficients[3] * x_min **
-                 5 / 5 + coefficients[4] * x_min ** 4 / 4 + coefficients[5] * x_min ** 3 / 3 + coefficients[6] * x_min ** 2 / 2 + coefficients[7] * x_min)
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
     root_label.grid(row=0, column=0)
@@ -465,10 +472,10 @@ def po_calculations(x_max, x_min, rounded_zeros, coefficients):
     created_widgets.append(function_root)
 
 
-    frame_calculations.columnconfigure(3, minsize=26)
-    frame_calculations.columnconfigure(4, minsize=26)
-    frame_calculations.columnconfigure(5, minsize=26)
-    frame_calculations.columnconfigure(6, minsize=26)
+    frame_calculations.rowconfigure(3, minsize=26)
+    frame_calculations.rowconfigure(4, minsize=26)
+    frame_calculations.rowconfigure(5, minsize=26)
+    frame_calculations.rowconfigure(6, minsize=26)
 
     value_x_max_min_title = tk.Label(frame_calculations, text="Podaj przedział aby obliczyć pole pod wykresem",
                                      width=100, anchor="w", justify="left", font=input_font_3, fg="#000080")
@@ -490,13 +497,10 @@ def po_calculations(x_max, x_min, rounded_zeros, coefficients):
     value_x_max_input.place(x=100, y=102)
     created_widgets.append(value_x_max_label)
     created_widgets.append(value_x_max_input)
-    value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=23, command=lambda: po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, rounded_zeros, coefficients))
+    value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=23, command=lambda: po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, coefficients))
     value_x_max_min_btn.place(x=0, y=128)
     created_widgets.append(value_x_max_min_btn)
-    area_under_plot_label = tk.Label(
-        frame_calculations, text=f"Pole pod wykresem dla wielomianu w przedziale ({x_min}; {x_max}) = {area_under_plot}", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
-    area_under_plot_label.grid(row=6, column=0, pady=80)
-    created_widgets.append(area_under_plot_label)
+    
 
 
 # funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla wielomianów
