@@ -16,7 +16,8 @@ created_widgets = []
 entry_list = []
 value_x_min = 0
 value_x_max = 0
-coefficients = [0,0,0,0,0,0,0,0]
+coefficients = [0, 0, 0, 0, 0, 0, 0, 0]
+second_coefficients = []
 
 
 # konfiguracja root
@@ -79,11 +80,13 @@ def show_poly_degree_input():
     destroy_widgets()  # i obliczenia
 
 # funkcja do obliczania pola pod wykresem dla funkcji liniowej
+
+
 def area_under_plot(value_a, value_b):
     area_under_plot_label = tk.Label(
         frame_calculations, text="Pole pod wykresem", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
     created_widgets.append(area_under_plot_label)
-    #obliczenie całki z funkcji liniowej i podłożenie za x x_max i odjęcie x_min
+    # obliczenie całki z funkcji liniowej i podłożenie za x x_max i odjęcie x_min
     area = value_a*value_x_max**2/2+value_b*value_x_max - \
         value_a*value_x_min**2/2-value_b*value_x_min
     area_under_plot_output = tk.Label(
@@ -229,11 +232,11 @@ def linear_processing():
 
 # funkcja do obliczania pola pod wykresem dla funkcji kwadratowej
 def sq_area_under_plot(value_x_min, value_x_max, value_a, value_b, value_c):
-    #obliczenie całki z funkcji kwadratowej i podłożenie za x x_max i odjęcie x_min
+    # obliczenie całki z funkcji kwadratowej i podłożenie za x x_max i odjęcie x_min
     area_under_field_value = value_a * value_x_max ** 3 / 3 + value_b * value_x_max ** 2 / 2 + \
         value_c * value_x_max - value_a * value_x_max ** 3 / 3 - \
         value_b * value_x_min ** 2 / 2 - value_c * value_x_min
-    area_under_field = f"Pole pod wykresem w przedziale ({value_x_min},{value_x_min}) wynosi {area_under_field_value}"
+    area_under_field = f"Pole pod wykresem w przedziale ({value_x_min},{value_x_max}) wynosi {area_under_field_value}"
 
     area_under_field_label = tk.Label(frame_calculations,
                                       text="Pole pod wykresem ", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
@@ -423,21 +426,34 @@ def values_processing(type_function, x_range, y_range):
         po_values_processing(poly_degree, x_range, y_range)
 
 
+def po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, rounded_zeros, coefficients):
+    global value_x_max
+    global value_x_min
+
+    value_x_min = float(value_x_min_input.get())
+    value_x_max = float(value_x_max_input.get())
+
+    po_calculations(value_x_max, value_x_min, rounded_zeros, coefficients)
+
+
 # Funkcja do obliczania miejsc zerowych dla wielomianów
-def calculate_zeros(coefficients):
-    zeros = np.roots(coefficients)
+def calculate_zeros(second_coefficients, coefficients):
+    zeros = np.roots(second_coefficients)
     real_zeros = [zero for zero in zeros if np.isreal(zero)]
     rounded_zeros = [round(zero.real, 2) for zero in real_zeros]
-
-    po_calculations(rounded_zeros, coefficients)
+    x_max = 1
+    x_min = -1
+    po_calculations(x_max, x_min, rounded_zeros, coefficients)
 
 
 # Dodatkowe obliczenia dla wielomianów
-def po_calculations(rounded_zeros, coefficients):
+def po_calculations(x_max, x_min, rounded_zeros, coefficients):
 
-    x_max = 1
-    x_min = -1
-    area_under_plot = coefficients[0] * x_max ** 8 / 8 + coefficients[1] * x_max ** 7 / 7 + coefficients[2] * x_max ** 6 / 6 + coefficients[3] * x_max ** 5 / 5 + coefficients[4] * x_max ** 4 / 4 + coefficients[5] * x_max ** 3 / 3 + coefficients[6] * x_max ** 2 / 2 + coefficients[7] * x_max - (coefficients[0] * x_min ** 8 / 8 + coefficients[1] * x_min ** 7 / 7 + coefficients[2] * x_min ** 6 / 6 + coefficients[3] * x_min ** 5 / 5 + coefficients[4] * x_min ** 4 / 4 + coefficients[5] * x_min ** 3 / 3 + coefficients[6] * x_min ** 2 / 2 + coefficients[7] * x_min)
+    
+
+    area_under_plot = coefficients[0] * x_max ** 8 / 8 + coefficients[1] * x_max ** 7 / 7 + coefficients[2] * x_max ** 6 / 6 + coefficients[3] * x_max ** 5 / 5 + coefficients[4] * x_max ** 4 / 4 + coefficients[5] * x_max ** 3 / 3 + coefficients[6] * x_max ** 2 / 2 + coefficients[7] * \
+        x_max - (coefficients[0] * x_min ** 8 / 8 + coefficients[1] * x_min ** 7 / 7 + coefficients[2] * x_min ** 6 / 6 + coefficients[3] * x_min **
+                 5 / 5 + coefficients[4] * x_min ** 4 / 4 + coefficients[5] * x_min ** 3 / 3 + coefficients[6] * x_min ** 2 / 2 + coefficients[7] * x_min)
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
     root_label.grid(row=0, column=0)
@@ -447,13 +463,41 @@ def po_calculations(rounded_zeros, coefficients):
         frame_calculations, text=f"Miejsca zerowe wielomianu to: {rounded_zeros}", font=input_font_2, width=100, anchor="w", justify="left")
     function_root.grid(row=1, column=0)
     created_widgets.append(function_root)
+
+
+    frame_calculations.columnconfigure(3, minsize=26)
+    frame_calculations.columnconfigure(4, minsize=26)
+    frame_calculations.columnconfigure(5, minsize=26)
+    frame_calculations.columnconfigure(6, minsize=26)
+
+    value_x_max_min_title = tk.Label(frame_calculations, text="Podaj przedział aby obliczyć pole pod wykresem",
+                                     width=100, anchor="w", justify="left", font=input_font_3, fg="#000080")
+    value_x_max_min_title.grid(row=2, column=0)
+    created_widgets.append(value_x_max_min_title)
+
+    value_x_min_label = tk.Label(
+        frame_calculations, text="Podaj x min", font=input_font_2, width=15, anchor="w", justify="left")
+    value_x_min_input = tk.Entry( frame_calculations, width=10)
+    value_x_min_label.place(x=0, y=74)
+    value_x_min_input.place(x=100, y=76)
+    created_widgets.append(value_x_min_label)
+    created_widgets.append(value_x_min_input)
     
+    value_x_max_label = tk.Label(
+        frame_calculations, text="Podaj x max", font=input_font_2, width=15, anchor="w", justify="left")
+    value_x_max_input = tk.Entry( frame_calculations, width=10)
+    value_x_max_label.place(x=0, y=100)
+    value_x_max_input.place(x=100, y=102)
+    created_widgets.append(value_x_max_label)
+    created_widgets.append(value_x_max_input)
+    value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=23, command=lambda: po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, rounded_zeros, coefficients))
+    value_x_max_min_btn.place(x=0, y=128)
+    created_widgets.append(value_x_max_min_btn)
     area_under_plot_label = tk.Label(
         frame_calculations, text=f"Pole pod wykresem dla wielomianu w przedziale ({x_min}; {x_max}) = {area_under_plot}", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
-    area_under_plot_label.grid(row=3, column=0)
+    area_under_plot_label.grid(row=6, column=0, pady=80)
     created_widgets.append(area_under_plot_label)
-    
-    
+
 
 # funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla wielomianów
 
@@ -469,7 +513,7 @@ def po_values_processing(poly_degree, x_range, y_range):
     x_range = int(x_range)
     y_range = int(y_range)
     global coefficient
-   
+
     for i in range(poly_degree):
         entry_value = entry_list[i].get()
         if not entry_value or not (entry_value.replace(".", "", 1).isdigit() or entry_value.replace("-", "", 1).replace(".", "", 1).isdigit()):
@@ -477,11 +521,11 @@ def po_values_processing(poly_degree, x_range, y_range):
                 "Błąd", "Jedna z wartości nie jest liczbą lub jest pusta.")
             return
         coefficient = float(entry_value)
+        second_coefficients.append(coefficient)
         coefficients[i] = coefficient
-    calculate_zeros(coefficients)
+
+    calculate_zeros(second_coefficients, coefficients)
     generate_polynomial_plot(coefficients, x_range, y_range)
-    print(coefficients)
-    
 
 
 # Zmienianie zakresu wykresu
@@ -792,6 +836,7 @@ def generate_polynomial_plot(coefficients, x_range, y_range):
     canvas = FigureCanvasTkAgg(figure, master=root)
     canvas.draw()
     draw_plot(canvas)
+
 
 # ukrywanie frame'ów po rozpoczęciu programu
 hide_frame(frame_linear_input)
