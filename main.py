@@ -233,9 +233,7 @@ def linear_processing():
 # funkcja do obliczania pola pod wykresem dla funkcji kwadratowej
 def sq_area_under_plot(value_x_min, value_x_max, value_a, value_b, value_c):
     # obliczenie całki z funkcji kwadratowej i podłożenie za x x_max i odjęcie x_min
-    area_under_field_value = value_a * value_x_max ** 3 / 3 + value_b * value_x_max ** 2 / 2 + \
-        value_c * value_x_max - value_a * value_x_max ** 3 / 3 - \
-        value_b * value_x_min ** 2 / 2 - value_c * value_x_min
+    area_under_field_value = (value_a * value_x_max ** 3) / 3 + (value_b * value_x_max ** 2) / 2 + value_c * value_x_max - (value_a * value_x_max ** 3) / 3 - ( value_b * value_x_min ** 2) / 2 - value_c * value_x_min
     area_under_field = f"Pole pod wykresem w przedziale ({value_x_min},{value_x_max}) wynosi {area_under_field_value}"
 
     area_under_field_label = tk.Label(frame_calculations,
