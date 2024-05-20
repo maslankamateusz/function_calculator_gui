@@ -49,32 +49,33 @@ def destroy_widgets():
     for widget in created_widgets:
         widget.destroy()
 
-
-# funkcja do pokazywania framów i zamykania wcześniejszych (dla funkcji liniowej i kwadratowej)
-def show_frame(frame):
-    if frame_linear_input.winfo_ismapped():
+def hide_all_frame():
+    if frame_poly_input.winfo_ismapped():
+        frame_poly_input.pack_forget()
+    elif frame_linear_input.winfo_ismapped():
         frame_linear_input.pack_forget()
     elif frame_square_input.winfo_ismapped():
         frame_square_input.pack_forget()
-    elif frame_poly_degree_input.winfo_ismapped():
-        frame_poly_degree_input.pack_forget()
-    elif frame_poly_input.winfo_ismapped():
-        frame_poly_input.pack_forget()
+    elif frame_trig_input.winfo_ismapped():
+        frame_trig_input.pack_forget()
+
+# funkcja do pokazywania framów i zamykania wcześniejszych (dla funkcji liniowej i kwadratowej)
+def show_frame(frame):
+    frame_linear_input.pack_forget()
+    frame_square_input.pack_forget()
+    frame_poly_degree_input.pack_forget()
+    frame_poly_input.pack_forget()
+    frame_trig_input.pack_forget()
     hide_frame(frame_plot_range)
     frame.pack()
     remove_plot()  # usuwanie wykresu
     destroy_widgets()  # usuwanie informacji dodatkowych
 
 
+
 # funkcja do pokazywania pola do wpisania stopnia wielomianu
 def show_poly_degree_input():
-    if frame_poly_input.winfo_ismapped():
-        return
-    elif frame_linear_input.winfo_ismapped():
-        frame_linear_input.pack_forget()
-    elif frame_square_input.winfo_ismapped():
-        frame_square_input.pack_forget()
-
+    hide_all_frame()
     frame_poly_degree_input.pack()
     remove_plot()  # przy każdym kliknięciu na przyciski główne usuwany jest wykres
     destroy_widgets()  # i obliczenia
@@ -542,9 +543,6 @@ def po_values_processing(poly_degree, x_range, y_range):
 
 
 
-
-
-
 # Zmienianie zakresu wykresu
 def change_range_plot(type_function):
     global x_range
@@ -594,6 +592,9 @@ def poly_input_generator():
 
         entry_list.append(entry)  # Dodanie entry do listy entry_list
 
+def tri_calculations(tri_type):
+    print(tri_type)
+    generate_trigonometric_plot(tri_type)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # dodawanie frame'a z miejscem na podstawowe przyciski
@@ -612,6 +613,10 @@ btn_square.grid(row=0, column=1, padx=50)
 btn_polynomial = tk.Button(frame_btn, text="Wielomiany", width=18, height=2, padx=1,
                            bg="#C3D6DB",  activebackground="#B2C5CA", font=btn_font, command=show_poly_degree_input)
 btn_polynomial.grid(row=0, column=2, padx=50)
+
+btn_trigonometry = tk.Button(frame_btn, text="F. trygonometryczne", width=18, height=2, padx=1,
+                           bg="#C3D6DB",  activebackground="#B2C5CA", font=btn_font, command=lambda: show_frame(frame_trig_input))
+btn_trigonometry.grid(row=0, column=3, padx=50)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # dodawanie frame'a z miejscem na wprowadzanie współrzędnych funkcji liniowej
@@ -724,7 +729,26 @@ po_submit_btn.grid(row=1, column=2, padx=10, pady=10)
 frame_poly_input = tk.Frame(root)
 frame_poly_input.pack()
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+# dodawanie frame'a dla funkcji trygonometrycznych
 
+frame_trig_input = tk.Frame(root)
+frame_trig_input.pack()
+
+
+btn_trig_sinus = tk.Button(frame_trig_input, text="Sinus", width=12, height=2, padx=1, bg="#d9d5b8",
+                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("sinus"))
+btn_trig_sinus.grid(row=0, column=0, padx=30, pady=20)
+btn_trig_cosinus = tk.Button(frame_trig_input, text="Cosinus", width=12, height=2, padx=1, bg="#d9d5b8",
+                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("cosinus") )
+btn_trig_cosinus.grid(row=0, column=1, padx=30, pady=20)
+btn_trig_tanges = tk.Button(frame_trig_input, text="Tanges", width=12, height=2, padx=1, bg="#d9d5b8",
+                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("tanges") )
+btn_trig_tanges.grid(row=0, column=2, padx=30, pady=20)
+btn_trig_cotanges = tk.Button(frame_trig_input, text="Cotanges", width=12, height=2, padx=1, bg="#d9d5b8",
+                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("cotanges") )
+btn_trig_cotanges.grid(row=0, column=3, padx=30, pady=20)
+#command=lambda: show_frame(generate_sinus_plot)
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # dodawanie frame'a z miejscem na wprowadzanie zakresu (x,y) wykresu
 frame_plot_range = tk.Frame(root)
@@ -773,9 +797,15 @@ canvas = None
 # funkcja rysująca wykres
 
 
-def draw_plot(canvas):
+def draw_plot(canvas, title=None):
     canvas.get_tk_widget().place(x=88, y=260)
     frame_plot_range.place(x=88, y=670)
+    if title:
+        plot = canvas.figure.gca()  # Pobierz aktualny subplot z figury
+        plot.set_title(title)  # Ustaw tytuł wykresu na podany tytuł
+
+
+
 
 # funkcja usuwająca wykres
 
@@ -854,12 +884,55 @@ def generate_polynomial_plot(coefficients, x_range, y_range):
     canvas.draw()
     draw_plot(canvas)
 
+#sinus    
+
+def generate_trigonometric_plot(trig_function):
+    x = np.linspace(-2*np.pi, 2*np.pi, 100)
+    if trig_function == "sinus":
+        y = np.sin(x)
+        title = "Wykres funkcji sinus"
+    elif trig_function == "cosinus":
+        y = np.cos(x)
+        title = "Wykres funkcji cosinus"
+    elif trig_function == "tanges":
+        y = np.tan(x)
+        title = "Wykres funkcji tangens"
+    elif trig_function == "cotanges":
+        y = 1 / np.tan(x)
+        title = "Wykres funkcji cotangens"
+    # Dodaj inne rodzaje funkcji trygonometrycznych, jeśli są potrzebne
+
+    figure = Figure(figsize=(5, 4), dpi=100)
+    plot = figure.add_subplot(111)
+    plot.plot(x, y)
+
+    # Ustawianie etykiet na osiach x jako wielokrotności wartości pi
+    x_ticks = [-2*np.pi, -3*np.pi/2, -np.pi, -np.pi/2, 0, np.pi/2, np.pi, 3*np.pi/2, 2*np.pi]
+    x_labels = [r'$-2\pi$', r'$-\frac{3\pi}{2}$', r'$-\pi$', r'$-\frac{\pi}{2}$', '0', r'$\frac{\pi}{2}$', r'$\pi$', r'$\frac{3\pi}{2}$', r'$2\pi$']
+    plot.set_xticks(x_ticks)
+    plot.set_xticklabels(x_labels)
+
+    plot.set_xlim(-2*np.pi, 2*np.pi)
+    plot.set_ylim(-2, 2)  # Zakładamy ograniczenie dla y w celu uniknięcia nieskończoności dla funkcji tangens
+
+    plot.axhline(0, color='black', linewidth=0.5)
+    plot.axvline(0, color='black', linewidth=0.5)
+
+    global canvas
+    if canvas:
+        remove_plot()
+
+    canvas = FigureCanvasTkAgg(figure, master=root)  # 'root' to Twoje okno tkintera
+    canvas.draw()
+    draw_plot(canvas, title=title) 
+
 
 # ukrywanie frame'ów po rozpoczęciu programu
 hide_frame(frame_linear_input)
 hide_frame(frame_square_input)
 hide_frame(frame_poly_degree_input)
 hide_frame(frame_poly_input)
+hide_frame(frame_trig_input)
 frame_plot_range.place_forget()
 
 
