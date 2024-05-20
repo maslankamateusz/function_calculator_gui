@@ -884,36 +884,46 @@ def generate_polynomial_plot(coefficients, x_range, y_range):
     canvas.draw()
     draw_plot(canvas)
 
-#sinus    
-
+#Rysowanie funkcji trygonometrycznych  
 def generate_trigonometric_plot(trig_function):
-    x = np.linspace(-2*np.pi, 2*np.pi, 100)
+    x = np.linspace(-2*np.pi, 2*np.pi, 1000)
     if trig_function == "sinus":
         y = np.sin(x)
         title = "Wykres funkcji sinus"
+        plot_function = np.sin
     elif trig_function == "cosinus":
         y = np.cos(x)
         title = "Wykres funkcji cosinus"
+        plot_function = np.cos
     elif trig_function == "tanges":
-        y = np.tan(x)
+        x_values = np.linspace(-2*np.pi, 2*np.pi, 1000)
+        y = np.tan(x_values)
         title = "Wykres funkcji tangens"
+        color = 'blue' 
     elif trig_function == "cotanges":
-        y = 1 / np.tan(x)
+        x_values = np.linspace(-2*np.pi, 2*np.pi, 1000)
+        y = 1 / np.tan(x_values)
         title = "Wykres funkcji cotangens"
-    # Dodaj inne rodzaje funkcji trygonometrycznych, jeśli są potrzebne
+        color = 'blue'  
 
     figure = Figure(figsize=(5, 4), dpi=100)
     plot = figure.add_subplot(111)
-    plot.plot(x, y)
 
-    # Ustawianie etykiet na osiach x jako wielokrotności wartości pi
+    if trig_function in ["sinus", "cosinus"]:
+        plot.plot(x, y)
+        plot.plot(x, plot_function(x), color='blue')  
+    else:
+        x_values = np.linspace(-2*np.pi, 2*np.pi, 1000)
+        y_filtered = np.ma.masked_where(abs(y) > 20, y)  
+        plot.plot(x_values, y_filtered, color=color)  
+
     x_ticks = [-2*np.pi, -3*np.pi/2, -np.pi, -np.pi/2, 0, np.pi/2, np.pi, 3*np.pi/2, 2*np.pi]
     x_labels = [r'$-2\pi$', r'$-\frac{3\pi}{2}$', r'$-\pi$', r'$-\frac{\pi}{2}$', '0', r'$\frac{\pi}{2}$', r'$\pi$', r'$\frac{3\pi}{2}$', r'$2\pi$']
     plot.set_xticks(x_ticks)
     plot.set_xticklabels(x_labels)
 
     plot.set_xlim(-2*np.pi, 2*np.pi)
-    plot.set_ylim(-2, 2)  # Zakładamy ograniczenie dla y w celu uniknięcia nieskończoności dla funkcji tangens
+    plot.set_ylim(-2, 2)  
 
     plot.axhline(0, color='black', linewidth=0.5)
     plot.axvline(0, color='black', linewidth=0.5)
@@ -922,9 +932,15 @@ def generate_trigonometric_plot(trig_function):
     if canvas:
         remove_plot()
 
-    canvas = FigureCanvasTkAgg(figure, master=root)  # 'root' to Twoje okno tkintera
+    canvas = FigureCanvasTkAgg(figure, master=root)  
     canvas.draw()
-    draw_plot(canvas, title=title) 
+    draw_plot(canvas, title=title)
+
+
+
+
+
+
 
 
 # ukrywanie frame'ów po rozpoczęciu programu
