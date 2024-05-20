@@ -23,7 +23,7 @@ second_coefficients = []
 # konfiguracja root
 root = Tk()
 root.title("Program do funkcji")
-root.geometry("1200x750")
+root.geometry("1350x750")
 
 root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=1)
@@ -94,7 +94,7 @@ def area_under_plot(value_a, value_b):
     created_widgets.append(area_under_plot_output)
     area_under_plot_label.grid(row=10, column=0)
 
-    area_under_plot_output.grid(row=11, column=0)
+    area_under_plot_output.grid(row=11, column=0, padx=(50,0))
 
 
 # funkcja przetwarzająca x_min i x_max, przedział do obliczania pola pod wykresem dla funkcji liniowej
@@ -128,8 +128,8 @@ def linear_calculations(value_a, value_b):
             frame_calculations, text="Funkcja nie posiada miejsc zerowych", width=100,  font=input_font_2, anchor="w", justify="left")
     else:
         function_root = tk.Label(
-            frame_calculations, text=f"Miejsce zerowe funkcji:{-1*value_b/value_a}", width=100,  font=input_font_2, anchor="w", justify="left")
-    function_root.grid(row=1, column=0)
+            frame_calculations, text=f"Miejsce zerowe funkcji:{(-1*value_b/value_a):.4g}", width=100,  font=input_font_2, anchor="w", justify="left")
+    function_root.grid(row=1, column=0, padx=(50, 0))
     created_widgets.append(function_root)
 
     monocity_label = tk.Label(
@@ -145,28 +145,28 @@ def linear_calculations(value_a, value_b):
         monotonicity = "stała"
 
     monotonicity_label = tk.Label(
-        frame_calculations, text=f"Funkcja jest {monotonicity} na całej swojej dziedzinie.", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
-    monotonicity_label.grid(row=3, column=0)
+        frame_calculations, text=f"Funkcja jest {monotonicity} na całej swojej dziedzinie.", font=input_font_2, width=100, anchor="w", justify="left", fg="#000000")
+    monotonicity_label.grid(row=3, column=0, padx=(50, 0))
     created_widgets.append(monotonicity_label)
 
     more_than_zero_label = tk.Label(frame_calculations,
-                                    text="Wartości większe od 0 ", font=input_font_2, width=100, anchor="w", justify="left")
+                                    text="Wartości większe od 0 ", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
     more_than_zero_label.grid(row=4, column=0)
     created_widgets.append(more_than_zero_label)
     more_than_zero = ""
     if value_a > 0:
         more_than_zero = tk.Label(
-            frame_calculations, text=f"Funkcja przyjmuje wartości większe od zera w przedziale ( {-1*value_b/value_a}, +niesk).", width=100, anchor="w", justify="left", font=input_font_2)
+            frame_calculations, text=f"Funkcja przyjmuje podane wartości w przedziale ( {(-1 * value_b / value_a):.4g}4, +niesk).", width=100, anchor="w", justify="left", font=input_font_2)
     elif value_a < 0:
         more_than_zero = tk.Label(
-            frame_calculations, text=f"Funkcja przyjmuje wartości większe od zera w przedziale (-niesk, {-1*value_b/value_a}).", width=100, anchor="w", justify="left", font=input_font_2)
+            frame_calculations, text=f"Funkcja przyjmuje podane wartości w przedziale (-niesk, {(-1*value_b/value_a):.4g}).", width=100, anchor="w", justify="left", font=input_font_2)
     elif value_b > 0:
         more_than_zero = tk.Label(
-            frame_calculations, text=f"Funkcja przyjmuje wartości większe od zera na całej swojej dziedzinie.", width=100, anchor="w", justify="left", font=input_font_2)
+            frame_calculations, text=f"Funkcja przyjmuje podane wartości na całej swojej dziedzinie.", width=100, anchor="w", justify="left", font=input_font_2)
     else:
         more_than_zero = tk.Label(
             frame_calculations, text=f"Funkcja nie przyjmuje wartości większych od zera.", width=100, anchor="w", justify="left", font=input_font_2)
-    more_than_zero.grid(row=5, column=0)
+    more_than_zero.grid(row=5, column=0, padx=(50, 0))
     created_widgets.append(more_than_zero)
 
     frame_calculations.rowconfigure(7, minsize=26)
@@ -186,21 +186,21 @@ def linear_calculations(value_a, value_b):
         frame_calculations, width=15)
     value_x_max_input = tk.Entry(
         frame_calculations, width=15)
-    value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=27, command=lambda: value_x_max_min_proccesing(
+    value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=31, command=lambda: value_x_max_min_proccesing(
         value_x_min_input, value_x_max_input, value_a, value_b))
-    value_x_min_label.place(x=0, y=176)
+    value_x_min_label.place(x=52, y=176)
     created_widgets.append(value_x_min_label)
-    value_x_min_input.place(x=100, y=178)
+    value_x_min_input.place(x=152, y=178)
     created_widgets.append(value_x_min_input)
-    value_x_max_label.place(x=0, y=202)
+    value_x_max_label.place(x=52, y=202)
     created_widgets.append(value_x_max_label)
-    value_x_max_input.place(x=100, y=204)
+    value_x_max_input.place(x=152, y=204)
     created_widgets.append(value_x_max_input)
-    value_x_max_min_btn.place(x=0, y=228)
+    value_x_max_min_btn.place(x=26, y=228)
     created_widgets.append(value_x_max_min_btn)
 
 
-# funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla funkcji liniowej
+#funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla funkcji liniowej
 def linear_processing():
 
     global type_function
@@ -242,7 +242,7 @@ def sq_area_under_plot(value_x_min, value_x_max, value_a, value_b, value_c):
     created_widgets.append(area_under_field_label)
     area_under_field_output = tk.Label(
         frame_calculations, text=area_under_field, font=input_font_2, width=100, anchor="w", justify="left",)
-    area_under_field_output.grid(row=11, column=0)
+    area_under_field_output.grid(row=11, column=0, padx=(50,0))
     created_widgets.append(area_under_field_output)
 
 
@@ -277,30 +277,30 @@ def square_calculations(value_a, value_b, value_c):
         x2 = (-1*value_b+delta_root)/(2*value_a)
         if x1 > x2:
             x1, x2 = x2, x1
-        function_root = f"Funkcja przymuje wartość 0 dla x1 = {x1}  oraz x2  = {x2}"
+        function_root = f"Funkcja przymuje wartość 0 dla x1 = {x1:.4g}  oraz x2  = {x2:.4g}"
         if value_a > 0:
-            values_above_zero = f"Funkcja przyjmuje wartości większe od zera w przedziale (- niesk, {x1}) oraz ({x2}, +niesk)"
+            values_above_zero = f"Funkcja przyjmuje podane wartości w przedziale (- niesk, {x1:.4g}) oraz ({x2:.4g}, +niesk)"
 
         elif value_a < 0:
-            values_above_zero = f"Funkcja przyjmuje wartości większe od zera w przedziale ({x1}, {x2})"
+            values_above_zero = f"Funkcja przyjmuje podane wartości w przedziale ({x1:.4g}, {x2:.4g})"
     if delta == 0:
         x0 = p
-        function_root = f"Funkcja posiada jedno miejsce zerowe x0 = {x0}"
+        function_root = f"Funkcja posiada jedno miejsce zerowe x0 = {x0:.4g}"
         if value_a > 0:
-            values_above_zero = "Funkcja przyjmuje wartości większe od zera w przedziale (- niesk, {x0}) oraz ({x0}, +niesk)"
+            values_above_zero = "Funkcja przyjmuje podane wartości w przedziale (- niesk, {x0:.4g}) oraz ({x0:.4g}, +niesk)"
         else:
             values_above_zero = "Funkcja nie przyjmuje wartości większych od 0"
     if delta < 0:
         function_root = "Funkcja nie posiada miejsc zerowych."
         if value_a > 0:
-            values_above_zero = "Funkcja przyjmuje wartości większe od zera na całej swojej dziedzinie."
+            values_above_zero = "Funkcja przyjmuje podane wartości na całej swojej dziedzinie."
         else:
             values_above_zero = "Funkcja nie przyjmuje wartości większych od 0"
 
     if value_a > 0:
-        monocity = f"Funkcja rośnie w przedziale ({p}, + niesk) i maleje w ( - niesk, {p})"
+        monocity = f"Funkcja rośnie w przedziale ({p:.4g}, + niesk) i maleje w ( - niesk, {p:.4g})"
     elif value_a < 0:
-        monocity = f"Funkcja rośnie w przedziale ( - niesk, {p}) i maleje w ({p}, + niesk)"
+        monocity = f"Funkcja rośnie w przedziale ( - niesk, {p:.4g}) i maleje w ({p:.4g}, + niesk)"
 
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
@@ -309,17 +309,17 @@ def square_calculations(value_a, value_b, value_c):
 
     function_root = tk.Label(
         frame_calculations, text=function_root, font=input_font_2, width=100, anchor="w", justify="left",)
-    function_root.grid(row=1, column=0)
+    function_root.grid(row=1, column=0, padx=(50,0))
     created_widgets.append(function_root)
 
     more_than_zero_label = tk.Label(frame_calculations,
-                                    text="Wartości większe od 0 ", font=input_font_2, width=100, anchor="w", justify="left",)
+                                    text="Wartości większe od 0 ", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
     more_than_zero_label.grid(row=2, column=0)
     created_widgets.append(more_than_zero_label)
 
     more_than_zero = tk.Label(
         frame_calculations, text=values_above_zero, font=input_font_2, width=100, anchor="w", justify="left",)
-    more_than_zero.grid(row=3, column=0)
+    more_than_zero.grid(row=3, column=0, padx=(50,0))
     created_widgets.append(more_than_zero)
 
     monocity_label = tk.Label(frame_calculations,
@@ -329,7 +329,7 @@ def square_calculations(value_a, value_b, value_c):
 
     monocity_output = tk.Label(
         frame_calculations, text=monocity, font=input_font_2, width=100, anchor="w", justify="left",)
-    monocity_output.grid(row=5, column=0)
+    monocity_output.grid(row=5, column=0, padx=(50,0))
     created_widgets.append(monocity_output)
 
     value_x_max_min_title = tk.Label(frame_calculations, text="Podaj przedział aby obliczyć pole pod wykresem",
@@ -351,15 +351,15 @@ def square_calculations(value_a, value_b, value_c):
         frame_calculations, width=15)
     value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=27, command=lambda: sq_value_x_max_min_proccesing(
         value_x_min_input, value_x_max_input, value_a, value_b, value_c))
-    value_x_min_label.place(x=0, y=176)
+    value_x_min_label.place(x=52, y=176)
     created_widgets.append(value_x_min_label)
-    value_x_min_input.place(x=100, y=178)
+    value_x_min_input.place(x=152, y=178)
     created_widgets.append(value_x_min_input)
-    value_x_max_label.place(x=0, y=202)
+    value_x_max_label.place(x=52, y=202)
     created_widgets.append(value_x_max_label)
-    value_x_max_input.place(x=100, y=204)
+    value_x_max_input.place(x=152, y=204)
     created_widgets.append(value_x_max_input)
-    value_x_max_min_btn.place(x=0, y=228)
+    value_x_max_min_btn.place(x=26, y=228)
     created_widgets.append(value_x_max_min_btn)
 
 
@@ -456,8 +456,7 @@ def calculate_zeros(second_coefficients, coefficients):
 
 # Dodatkowe obliczenia dla wielomianów
 def po_calculations(x_max, x_min, rounded_zeros, coefficients):
-
-    
+  
 
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
@@ -466,7 +465,7 @@ def po_calculations(x_max, x_min, rounded_zeros, coefficients):
 
     function_root = tk.Label(
         frame_calculations, text=f"Miejsca zerowe wielomianu to: {rounded_zeros}", font=input_font_2, width=100, anchor="w", justify="left")
-    function_root.grid(row=1, column=0)
+    function_root.grid(row=1, column=0, padx=(50,0))
     created_widgets.append(function_root)
 
 
@@ -483,29 +482,29 @@ def po_calculations(x_max, x_min, rounded_zeros, coefficients):
     value_x_min_label = tk.Label(
         frame_calculations, text="Podaj x min", font=input_font_2, width=15, anchor="w", justify="left")
     value_x_min_input = tk.Entry( frame_calculations, width=10)
-    value_x_min_label.place(x=0, y=74)
-    value_x_min_input.place(x=100, y=76)
+    value_x_min_label.place(x=52, y=74)
+    value_x_min_input.place(x=152, y=76)
     created_widgets.append(value_x_min_label)
     created_widgets.append(value_x_min_input)
     
     value_x_max_label = tk.Label(
         frame_calculations, text="Podaj x max", font=input_font_2, width=15, anchor="w", justify="left")
     value_x_max_input = tk.Entry( frame_calculations, width=10)
-    value_x_max_label.place(x=0, y=100)
-    value_x_max_input.place(x=100, y=102)
+    value_x_max_label.place(x=52, y=100)
+    value_x_max_input.place(x=152, y=102)
     created_widgets.append(value_x_max_label)
     created_widgets.append(value_x_max_input)
     value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=23, command=lambda: po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, coefficients))
-    value_x_max_min_btn.place(x=0, y=128)
+    value_x_max_min_btn.place(x=26, y=128)
     created_widgets.append(value_x_max_min_btn)
     
 
 
 # funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla wielomianów
 
-
 def po_values_processing(poly_degree, x_range, y_range):
     global type_function
+    global coefficients
     type_function = "po"
 
     if x_range == "":
@@ -516,6 +515,8 @@ def po_values_processing(poly_degree, x_range, y_range):
     y_range = int(y_range)
     global coefficient
 
+    second_coefficients = []
+
     for i in range(poly_degree):
         entry_value = entry_list[i].get()
         if not entry_value or not (entry_value.replace(".", "", 1).isdigit() or entry_value.replace("-", "", 1).replace(".", "", 1).isdigit()):
@@ -524,10 +525,24 @@ def po_values_processing(poly_degree, x_range, y_range):
             return
         coefficient = float(entry_value)
         second_coefficients.append(coefficient)
-        coefficients[i] = coefficient
+
+    # Sprawdzenie długości współczynników
+    if len(second_coefficients) < poly_degree:
+        messagebox.showerror(
+            "Błąd", "Nie wprowadzono wszystkich współczynników.")
+        return
+
+    # Zamiana miejsc współczynników
+    coefficients = second_coefficients[::-1] + [0] * (8 - poly_degree)
+    coefficients.reverse()
+    
 
     calculate_zeros(second_coefficients, coefficients)
     generate_polynomial_plot(coefficients, x_range, y_range)
+
+
+
+
 
 
 # Zmienianie zakresu wykresu
