@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import font
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.ticker as ticker
@@ -110,17 +111,24 @@ def value_x_max_min_proccesing(value_x_min_input, value_x_max_input, value_a, va
 
 
 # Dodatkowe obliczenia dla funkcji liniowej
-def linear_calculations(value_a, value_b):
+def format_value(value):
+    if value == int(value):
+        return f"{int(value)}"
+    else:
+        return f"{value:.4f}".rstrip('0').rstrip('.')
 
+def linear_calculations(value_a, value_b):
     global value_x_min
     global value_x_max
 
     value_a = float(value_a)
     value_b = float(value_b)
+    
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
     root_label.grid(row=0, column=0)
     created_widgets.append(root_label)
+    
     if value_a == 0 and value_b == 0:
         function_root = tk.Label(
             frame_calculations, text="Miejsca zerowe funkcji to zbiór liczb rzeczywistych", font=input_font_2, width=100, anchor="w", justify="left")
@@ -128,8 +136,10 @@ def linear_calculations(value_a, value_b):
         function_root = tk.Label(
             frame_calculations, text="Funkcja nie posiada miejsc zerowych", width=100,  font=input_font_2, anchor="w", justify="left")
     else:
+        zero_point = format_value(-1 * value_b / value_a)
         function_root = tk.Label(
-            frame_calculations, text=f"Miejsce zerowe funkcji:{(-1*value_b/value_a):.4g}", width=100,  font=input_font_2, anchor="w", justify="left")
+            frame_calculations, text=f"Miejsce zerowe funkcji: {zero_point}", width=100,  font=input_font_2, anchor="w", justify="left")
+    
     function_root.grid(row=1, column=0, padx=(50, 0))
     created_widgets.append(function_root)
 
@@ -137,7 +147,7 @@ def linear_calculations(value_a, value_b):
         frame_calculations, text="Monotoniczność ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
     monocity_label.grid(row=2, column=0)
     created_widgets.append(monocity_label)
-    monotonicity = ""
+    
     if value_a > 0:
         monotonicity = "rosnąca"
     elif value_a < 0:
@@ -154,19 +164,22 @@ def linear_calculations(value_a, value_b):
                                     text="Wartości większe od 0 ", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
     more_than_zero_label.grid(row=4, column=0)
     created_widgets.append(more_than_zero_label)
-    more_than_zero = ""
+    
     if value_a > 0:
+        range_value = format_value(-1 * value_b / value_a)
         more_than_zero = tk.Label(
-            frame_calculations, text=f"Funkcja przyjmuje podane wartości w przedziale ( {(-1 * value_b / value_a):.4g}4, +niesk).", width=100, anchor="w", justify="left", font=input_font_2)
+            frame_calculations, text=f"Funkcja przyjmuje podane wartości w przedziale ({range_value}, +niesk).", width=100, anchor="w", justify="left", font=input_font_2)
     elif value_a < 0:
+        range_value = format_value(-1 * value_b / value_a)
         more_than_zero = tk.Label(
-            frame_calculations, text=f"Funkcja przyjmuje podane wartości w przedziale (-niesk, {(-1*value_b/value_a):.4g}).", width=100, anchor="w", justify="left", font=input_font_2)
+            frame_calculations, text=f"Funkcja przyjmuje podane wartości w przedziale (-niesk, {range_value}).", width=100, anchor="w", justify="left", font=input_font_2)
     elif value_b > 0:
         more_than_zero = tk.Label(
             frame_calculations, text=f"Funkcja przyjmuje podane wartości na całej swojej dziedzinie.", width=100, anchor="w", justify="left", font=input_font_2)
     else:
         more_than_zero = tk.Label(
             frame_calculations, text=f"Funkcja nie przyjmuje wartości większych od zera.", width=100, anchor="w", justify="left", font=input_font_2)
+    
     more_than_zero.grid(row=5, column=0, padx=(50, 0))
     created_widgets.append(more_than_zero)
 
@@ -180,15 +193,14 @@ def linear_calculations(value_a, value_b):
     created_widgets.append(value_x_max_min_title)
 
     value_x_min_label = tk.Label(
-        frame_calculations, text="Podaj x min", font=input_font_2, width=15, anchor="w", justify="left",)
+        frame_calculations, text="Podaj x min", font=input_font_2, width=15, anchor="w", justify="left")
     value_x_max_label = tk.Label(
-        frame_calculations, text="Podaj x max", font=input_font_2, width=15, anchor="w", justify="left",)
-    value_x_min_input = tk.Entry(
-        frame_calculations, width=15)
-    value_x_max_input = tk.Entry(
-        frame_calculations, width=15)
+        frame_calculations, text="Podaj x max", font=input_font_2, width=15, anchor="w", justify="left")
+    value_x_min_input = tk.Entry(frame_calculations, width=15)
+    value_x_max_input = tk.Entry(frame_calculations, width=15)
     value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=31, command=lambda: value_x_max_min_proccesing(
         value_x_min_input, value_x_max_input, value_a, value_b))
+    
     value_x_min_label.place(x=52, y=176)
     created_widgets.append(value_x_min_label)
     value_x_min_input.place(x=152, y=178)
@@ -199,6 +211,7 @@ def linear_calculations(value_a, value_b):
     created_widgets.append(value_x_max_input)
     value_x_max_min_btn.place(x=26, y=228)
     created_widgets.append(value_x_max_min_btn)
+
 
 
 #funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla funkcji liniowej
@@ -593,8 +606,74 @@ def poly_input_generator():
         entry_list.append(entry)  # Dodanie entry do listy entry_list
 
 def tri_calculations(tri_type):
-    print(tri_type)
+    root_label = tk.Label(frame_calculations,
+                          text="Obliczanie przybliżonych wartości wybranej funkcji trygonometrycznej", font=input_font_3, width=60, anchor="w", justify="left", fg="#000080")
+    root_label.grid(row=0, column=0, columnspan=3, pady=(0, 10), padx=(30,0))
+    created_widgets.append(root_label)
+
+    tri_angle_input_label = tk.Label(
+        frame_calculations, text="Kąt w stopniach: ", font=input_font_2, anchor="w", justify="left")
+    tri_angle_input_label.grid(row=1, column=0)
+    created_widgets.append(tri_angle_input_label)
+
+    tri_angle_input = tk.Entry(frame_calculations, width=15)
+    tri_angle_input.grid(row=1, column=1)
+    created_widgets.append(tri_angle_input)
+    
+    tri_angle_output = tk.Entry(frame_calculations, width=15, )
+    tri_angle_output.grid(row=1, column=2)
+    created_widgets.append(tri_angle_output)
+
+    calc_button = tk.Button(frame_calculations, text="Oblicz", width=20, command=lambda: tri_estimated_value(tri_type, tri_angle_input, tri_angle_output)) 
+    calc_button.grid(row=2, column=1, columnspan=2, pady=(10, 0))
+    created_widgets.append(calc_button)
+
+
+
+
+    root_label2 = tk.Label(frame_calculations,
+                          text="Obliczanie dokładnych wartości wybranej funkcji trygonometrycznej", font=input_font_3, width=60, anchor="w", justify="left", fg="#000080")
+    root_label2.grid(row=3, column=0, columnspan=3, pady=(0, 10), padx=(30,0))
+    created_widgets.append(root_label2)
+
+    tri_angle_input2_label = tk.Label(
+        frame_calculations, text="Kąt w stopniach: ", font=input_font_2, anchor="w", justify="left")
+    tri_angle_input2_label.grid(row=4, column=0)
+    created_widgets.append(tri_angle_input2_label)
+
+    options = ["15° - π/12", "30° - π/6", "45° - π/4", "60° - π/3", "75° - 5π/12", "90° - π/2"]
+    tri_angle_input2 = ttk.Combobox(frame_calculations, values=options, width=15)
+    tri_angle_input2.grid(row=4, column=1)
+    created_widgets.append(tri_angle_input2)
+    
+    tri_angle_output2 = tk.Entry(frame_calculations, width=15, state="readonly")
+    tri_angle_output2.grid(row=4, column=2)
+    created_widgets.append(tri_angle_output2)
+
+    calc_button2 = tk.Button(frame_calculations, text="Oblicz", width=20)
+    calc_button2.grid(row=5, column=1, columnspan=2, pady=(10, 0))
+    created_widgets.append(calc_button2)
+
     generate_trigonometric_plot(tri_type)
+
+def tri_estimated_value(tri_type, angle_entry, tri_angle_output):
+    angle_value = float(angle_entry.get())
+    angle_rad = math.radians(angle_value)  
+
+    if tri_type == "sinus":
+        result = round(math.sin(angle_rad), 4)
+    elif tri_type == "cosinus":
+        result = round(math.cos(angle_rad), 4)
+    elif tri_type == "tangens":
+        result = round(math.tan(angle_rad), 4)
+    else:
+        result = "Nieznana funkcja trygonometryczna"
+
+    print(result)
+    tri_angle_output.delete(0, "end")  
+    tri_angle_output.insert(0, str(result)) 
+
+
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # dodawanie frame'a z miejscem na podstawowe przyciski
@@ -735,7 +814,6 @@ frame_poly_input.pack()
 frame_trig_input = tk.Frame(root)
 frame_trig_input.pack()
 
-
 btn_trig_sinus = tk.Button(frame_trig_input, text="Sinus", width=12, height=2, padx=1, bg="#d9d5b8",
                        activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("sinus"))
 btn_trig_sinus.grid(row=0, column=0, padx=30, pady=20)
@@ -748,7 +826,7 @@ btn_trig_tanges.grid(row=0, column=2, padx=30, pady=20)
 btn_trig_cotanges = tk.Button(frame_trig_input, text="Cotanges", width=12, height=2, padx=1, bg="#d9d5b8",
                        activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("cotanges") )
 btn_trig_cotanges.grid(row=0, column=3, padx=30, pady=20)
-#command=lambda: show_frame(generate_sinus_plot)
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # dodawanie frame'a z miejscem na wprowadzanie zakresu (x,y) wykresu
 frame_plot_range = tk.Frame(root)
@@ -886,6 +964,7 @@ def generate_polynomial_plot(coefficients, x_range, y_range):
 
 #Rysowanie funkcji trygonometrycznych  
 def generate_trigonometric_plot(trig_function):
+    
     x = np.linspace(-2*np.pi, 2*np.pi, 1000)
     if trig_function == "sinus":
         y = np.sin(x)
@@ -935,6 +1014,8 @@ def generate_trigonometric_plot(trig_function):
     canvas = FigureCanvasTkAgg(figure, master=root)  
     canvas.draw()
     draw_plot(canvas, title=title)
+    hide_frame(frame_plot_range)
+
 
 
 
