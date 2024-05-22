@@ -43,8 +43,6 @@ def hide_frame(frame):
     frame_plot_range.place_forget()
 
 # funkcja do usuwania widgetów z frame_caluclations
-
-
 def destroy_widgets():
     global created_widgets
     for widget in created_widgets:
@@ -69,8 +67,8 @@ def show_frame(frame):
     frame_trig_input.pack_forget()
     hide_frame(frame_plot_range)
     frame.pack()
-    remove_plot()  # usuwanie wykresu
-    destroy_widgets()  # usuwanie informacji dodatkowych
+    remove_plot()  
+    destroy_widgets() 
 
 
 
@@ -78,12 +76,10 @@ def show_frame(frame):
 def show_poly_degree_input():
     hide_all_frame()
     frame_poly_degree_input.pack()
-    remove_plot()  # przy każdym kliknięciu na przyciski główne usuwany jest wykres
-    destroy_widgets()  # i obliczenia
+    remove_plot()  
+    destroy_widgets() 
 
 # funkcja do obliczania pola pod wykresem dla funkcji liniowej
-
-
 def area_under_plot(value_a, value_b):
     area_under_plot_label = tk.Label(
         frame_calculations, text="Pole pod wykresem", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
@@ -98,6 +94,23 @@ def area_under_plot(value_a, value_b):
 
     area_under_plot_output.grid(row=11, column=0, padx=(50,0))
 
+# funkcja do obliczania pola pod wykresem dla funkcji trygonometrycznych
+def area_under_plot_trig(tri_type, value_min, value_max, input_label, output_label):
+    value_min = float(value_min) * np.pi / 180
+    value_max = float(value_max) * np.pi / 180
+    
+    if tri_type == "sinus":
+        result = np.abs(-1 * np.cos(value_max) + np.cos(value_min)) 
+    elif tri_type == "cosinus":
+        result = np.sin(value_max) - np.sin(value_min) 
+    elif tri_type == "tangens":
+        result = -1 * np.log(np.abs(np.cos(value_max))) + np.log(np.abs(np.cos(value_min))) 
+    elif tri_type == "cotangens":
+        result = np.log(np.abs(np.sin(value_max))) - np.log(np.abs(np.sin(value_min)))
+
+    input_label.config(text="Pole pod wykresem")
+    output_label.config(text=f"Wynik: {round(result, 4)}")
+  
 
 # funkcja przetwarzająca x_min i x_max, przedział do obliczania pola pod wykresem dla funkcji liniowej
 def value_x_max_min_proccesing(value_x_min_input, value_x_max_input, value_a, value_b):
@@ -148,6 +161,7 @@ def linear_calculations(value_a, value_b):
     monocity_label.grid(row=2, column=0)
     created_widgets.append(monocity_label)
     
+    #monotoniczność f liniowej
     if value_a > 0:
         monotonicity = "rosnąca"
     elif value_a < 0:
@@ -165,6 +179,7 @@ def linear_calculations(value_a, value_b):
     more_than_zero_label.grid(row=4, column=0)
     created_widgets.append(more_than_zero_label)
     
+    #wartości >0 f liniowej
     if value_a > 0:
         range_value = format_value(-1 * value_b / value_a)
         more_than_zero = tk.Label(
@@ -247,7 +262,7 @@ def linear_processing():
 # funkcja do obliczania pola pod wykresem dla funkcji kwadratowej
 def sq_area_under_plot(value_x_min, value_x_max, value_a, value_b, value_c):
     # obliczenie całki z funkcji kwadratowej i podłożenie za x x_max i odjęcie x_min
-    area_under_field_value = (value_a * value_x_max ** 3) / 3 + (value_b * value_x_max ** 2) / 2 + value_c * value_x_max - (value_a * value_x_max ** 3) / 3 - ( value_b * value_x_min ** 2) / 2 - value_c * value_x_min
+    area_under_field_value = (value_a * value_x_max ** 3) / 3 + (value_b * value_x_max ** 2) / 2 + value_c * value_x_max - (value_a * value_x_min ** 3) / 3 - ( value_b * value_x_min ** 2) / 2 - value_c * value_x_min
     area_under_field = f"Pole pod wykresem w przedziale ({value_x_min},{value_x_max}) wynosi {area_under_field_value}"
 
     area_under_field_label = tk.Label(frame_calculations,
@@ -270,9 +285,7 @@ def sq_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, value_a,
 
     sq_area_under_plot(value_x_min, value_x_max, value_a, value_b, value_c)
 
-# Dodatkowe obliczenia dla funkcji liniowej
-
-
+# Obliczenia dla funkcji kwadratowej
 def square_calculations(value_a, value_b, value_c):
     value_a = float(value_a)
     value_b = float(value_b)
@@ -301,9 +314,9 @@ def square_calculations(value_a, value_b, value_c):
         x0 = p
         function_root = f"Funkcja posiada jedno miejsce zerowe x0 = {x0:.4g}"
         if value_a > 0:
-            values_above_zero = "Funkcja przyjmuje podane wartości w przedziale (- niesk, {x0:.4g}) oraz ({x0:.4g}, +niesk)"
+            values_above_zero = f"Funkcja przyjmuje podane wartości w przedziale (- niesk, {x0}) oraz ({x0}, +niesk)"
         else:
-            values_above_zero = "Funkcja nie przyjmuje wartości większych od 0"
+            values_above_zero = f"Funkcja nie przyjmuje wartości większych od 0"
     if delta < 0:
         function_root = "Funkcja nie posiada miejsc zerowych."
         if value_a > 0:
@@ -397,7 +410,7 @@ def square_processing():
     value_a = sq_input_a.get()
     value_b = sq_input_b.get()
     value_c = sq_input_c.get()
-
+    #walidacja
     if not value_a or not (value_a.replace(".", "", 1).isdigit() or value_a.replace("-", "", 1).replace(".", "", 1).isdigit()) or value_a.isspace():
         messagebox.showerror("Błąd", "Podana wartość a nie jest liczbą.")
         return
@@ -446,12 +459,10 @@ def po_value_x_max_min_proccesing(value_x_min_input, value_x_max_input, coeffici
     value_x_max = float(value_x_max_input.get())
     x_max = value_x_max
     x_min = value_x_min
-    
+    #całka z wielomianu
     area_under_plot = coefficients[0] * x_max ** 8 / 8 + coefficients[1] * x_max ** 7 / 7 + coefficients[2] * x_max ** 6 / 6 + coefficients[3] * x_max ** 5 / 5 + coefficients[4] * x_max ** 4 / 4 + coefficients[5] * x_max ** 3 / 3 + coefficients[6] * x_max ** 2 / 2 + coefficients[7] * \
         x_max - (coefficients[0] * x_min ** 8 / 8 + coefficients[1] * x_min ** 7 / 7 + coefficients[2] * x_min ** 6 / 6 + coefficients[3] * x_min **
                  5 / 5 + coefficients[4] * x_min ** 4 / 4 + coefficients[5] * x_min ** 3 / 3 + coefficients[6] * x_min ** 2 / 2 + coefficients[7] * x_min)
-    
-    
     area_under_plot_label = tk.Label(
         frame_calculations, text=f"Pole pod wykresem dla wielomianu w przedziale ({value_x_min}; {value_x_max}) = {area_under_plot}", font=input_font_2, width=100, anchor="w", justify="left", fg="#000080")
     area_under_plot_label.grid(row=6, column=0, pady=50)
@@ -470,7 +481,6 @@ def calculate_zeros(second_coefficients, coefficients):
 
 # Dodatkowe obliczenia dla wielomianów
 def po_calculations(x_max, x_min, rounded_zeros, coefficients):
-  
 
     root_label = tk.Label(frame_calculations,
                           text="Miejsca zerowe ", font=input_font_3, width=100, anchor="w", justify="left", fg="#000080")
@@ -515,7 +525,6 @@ def po_calculations(x_max, x_min, rounded_zeros, coefficients):
 
 
 # funkcja do zbierania danych i wysyłania do funkcji rysującej wykres i robiącej dodatkowe obliczenia dla wielomianów
-
 def po_values_processing(poly_degree, x_range, y_range):
     global type_function
     global coefficients
@@ -568,6 +577,7 @@ def change_range_plot(type_function):
     values_processing(type_function, x_range, y_range)
 
 
+
 # funkcja generująca odpowiednią ilość pól do wprowadzania dla wielomianów
 def poly_input_generator():
     for widget in frame_poly_input.winfo_children():
@@ -603,8 +613,9 @@ def poly_input_generator():
                 frame_poly_input, text="Potwierdź", command=lambda: po_values_processing(poly_degree, 10, 10))
             po_input_submit_btn.grid(row=row, column=column+2)
 
-        entry_list.append(entry)  # Dodanie entry do listy entry_list
+        entry_list.append(entry)
 
+#obliczenia dla funkcji trygonometrycznych
 def tri_calculations(tri_type):
     root_label = tk.Label(frame_calculations,
                           text="Obliczanie przybliżonych wartości wybranej funkcji trygonometrycznej", font=input_font_3, width=60, anchor="w", justify="left", fg="#000080")
@@ -620,15 +631,13 @@ def tri_calculations(tri_type):
     tri_angle_input.grid(row=1, column=1)
     created_widgets.append(tri_angle_input)
     
-    tri_angle_output = tk.Entry(frame_calculations, width=15, )
+    tri_angle_output = tk.Entry(frame_calculations, width=15, state='readonly' )
     tri_angle_output.grid(row=1, column=2)
     created_widgets.append(tri_angle_output)
 
     calc_button = tk.Button(frame_calculations, text="Oblicz", width=20, command=lambda: tri_estimated_value(tri_type, tri_angle_input, tri_angle_output)) 
     calc_button.grid(row=2, column=1, columnspan=2, pady=(10, 0))
     created_widgets.append(calc_button)
-
-
 
 
     root_label2 = tk.Label(frame_calculations,
@@ -650,12 +659,49 @@ def tri_calculations(tri_type):
     tri_angle_output2.grid(row=4, column=2)
     created_widgets.append(tri_angle_output2)
 
-    calc_button2 = tk.Button(frame_calculations, text="Oblicz", width=20)
+    calc_button2 = tk.Button(frame_calculations, text="Oblicz", width=20, command=lambda: tri_accurate_value(tri_type, tri_angle_input2, tri_angle_output2) )
     calc_button2.grid(row=5, column=1, columnspan=2, pady=(10, 0))
     created_widgets.append(calc_button2)
 
-    generate_trigonometric_plot(tri_type)
+    value_x_max_min_title = tk.Label(frame_calculations, text="Podaj przedział aby obliczyć pole pod wykresem",
+                                     width=50, anchor="w", justify="left", font=input_font_3, fg="#000080")
+    value_x_max_min_title.grid(row=6, column=0, columnspan=2, padx=(42,0))
+    created_widgets.append(value_x_max_min_title)
 
+    value_x_min_label = tk.Label(
+        frame_calculations, text="Podaj x min", font=input_font_2, width=15, anchor="w", justify="left")
+    value_x_max_label = tk.Label(
+        frame_calculations, text="Podaj x max", font=input_font_2, width=15, anchor="w", justify="left")
+    value_x_min_input = tk.Entry(frame_calculations, width=15)
+    value_x_max_input = tk.Entry(frame_calculations, width=15)
+    value_x_max_min_btn = tk.Button(frame_calculations, text="Potwierdź", width=25, command=lambda: area_under_plot_trig(tri_type, value_x_min_input.get(), value_x_max_input.get(), area_under_plot_label, area_under_plot_output))
+    
+    value_x_min_label.grid(row=7, column=0, pady=5)
+    created_widgets.append(value_x_min_label)
+    value_x_min_input.grid(row=7, column=1, pady=5)
+    created_widgets.append(value_x_min_input)
+    value_x_max_label.grid(row=8, column=0, pady=2)
+    created_widgets.append(value_x_max_label)
+    value_x_max_input.grid(row=8, column=1, pady=5)
+    created_widgets.append(value_x_max_input)
+    value_x_max_min_btn.grid(row=9, column=0, columnspan=2, pady=5)
+    created_widgets.append(value_x_max_min_btn)
+
+    area_under_plot_label = tk.Label(
+    frame_calculations, text="", font=input_font_3, width=20, anchor="w", justify="left", fg="#000080")
+    area_under_plot_label.grid(row=10, column=0, pady=5)
+    created_widgets.append(area_under_plot_label)
+
+    area_under_plot_output = tk.Label(
+    frame_calculations, text="", font=input_font_2, width=15, anchor="w", justify="left")
+    area_under_plot_output.grid(row=11, column=0, pady=5)
+    created_widgets.append(area_under_plot_output)
+
+    generate_trigonometric_plot(tri_type)    
+    hide_frame(frame_plot_range)
+
+
+# Funkcja do podawania zaokrąglonych wartości f. tryg
 def tri_estimated_value(tri_type, angle_entry, tri_angle_output):
     angle_value = float(angle_entry.get())
     angle_rad = math.radians(angle_value)  
@@ -665,14 +711,78 @@ def tri_estimated_value(tri_type, angle_entry, tri_angle_output):
     elif tri_type == "cosinus":
         result = round(math.cos(angle_rad), 4)
     elif tri_type == "tangens":
-        result = round(math.tan(angle_rad), 4)
+        if angle_value != 90:
+            result = round(math.tan(angle_rad), 4)
+        else:
+            result = "-"
+    elif tri_type == "cotangens":
+        if math.tan(angle_rad) != 0:
+            result = round(1/(math.tan(angle_rad)), 4)
+        else:
+            result = "-"
     else:
         result = "Nieznana funkcja trygonometryczna"
 
-    print(result)
-    tri_angle_output.delete(0, "end")  
-    tri_angle_output.insert(0, str(result)) 
+    tri_angle_output.config(state=tk.NORMAL)
+    tri_angle_output.delete(0, tk.END)
+    tri_angle_output.insert(0, result)
+    tri_angle_output.config(state='readonly')
 
+# Funkcja do podawania dokładnych wartości f. tryg
+def tri_accurate_value(tri_type, angle_entry, tri_angle_output):
+    
+    accurate_value_sin = {
+        "15° - π/12": "(√6 - √2)/4",
+        "30° - π/6": "1/2",
+        "45° - π/4": "√2/2",
+        "60° - π/3": "√3/2",
+        "75° - 5π/12": "(√6 + √2)/4",
+        "90° - π/2": "1"
+    }
+    
+    accurate_value_cos = {
+        "15° - π/12": "(√6 + √2)/4",
+        "30° - π/6": "√3/2",
+        "45° - π/4": "√2/2",
+        "60° - π/3": "1/2",
+        "75° - 5π/12": "(√6 - √2)/4",
+        "90° - π/2": "0"
+    }
+    
+    accurate_value_tan = {
+        "15° - π/12": "2 - √3",
+        "30° - π/6": "1/√3",
+        "45° - π/4": "1",
+        "60° - π/3": "√3",
+        "75° - 5π/12": "2 + √3",
+        "90° - π/2": "Nieokreślone"
+    }
+    accurate_value_ctg = {
+        "15° - π/12": "2 + √3",
+        "30° - π/6": "√3",
+        "45° - π/4": "1",
+        "60° - π/3": "1/√3",
+        "75° - 5π/12": "2 - √3",
+        "90° - π/2": "Nieokreślone"
+    }
+    if tri_type == "sinus":
+        accurate_value_list = accurate_value_sin
+    elif tri_type == "cosinus":
+        accurate_value_list = accurate_value_cos
+    elif tri_type == "tangens":
+        accurate_value_list = accurate_value_tan
+    elif tri_type == "cotangens":
+        accurate_value_list = accurate_value_ctg
+    else:
+        return "Nieznana funkcja trygonometryczna"
+
+    for key, value in accurate_value_list.items():
+        if angle_entry.get() == key:
+            tri_angle_output.config(state=tk.NORMAL)
+            tri_angle_output.delete(0, tk.END)
+            tri_angle_output.insert(0, value)
+            tri_angle_output.config(state='readonly')
+            break
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -693,7 +803,7 @@ btn_polynomial = tk.Button(frame_btn, text="Wielomiany", width=18, height=2, pad
                            bg="#C3D6DB",  activebackground="#B2C5CA", font=btn_font, command=show_poly_degree_input)
 btn_polynomial.grid(row=0, column=2, padx=50)
 
-btn_trigonometry = tk.Button(frame_btn, text="F. trygonometryczne", width=18, height=2, padx=1,
+btn_trigonometry = tk.Button(frame_btn, text="F. Trygonometryczne", width=18, height=2, padx=1,
                            bg="#C3D6DB",  activebackground="#B2C5CA", font=btn_font, command=lambda: show_frame(frame_trig_input))
 btn_trigonometry.grid(row=0, column=3, padx=50)
 
@@ -821,10 +931,10 @@ btn_trig_cosinus = tk.Button(frame_trig_input, text="Cosinus", width=12, height=
                        activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("cosinus") )
 btn_trig_cosinus.grid(row=0, column=1, padx=30, pady=20)
 btn_trig_tanges = tk.Button(frame_trig_input, text="Tanges", width=12, height=2, padx=1, bg="#d9d5b8",
-                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("tanges") )
+                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("tangens") )
 btn_trig_tanges.grid(row=0, column=2, padx=30, pady=20)
 btn_trig_cotanges = tk.Button(frame_trig_input, text="Cotanges", width=12, height=2, padx=1, bg="#d9d5b8",
-                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("cotanges") )
+                       activebackground="#c4c1a5", font=btn_font, command=lambda: tri_calculations("cotangens") )
 btn_trig_cotanges.grid(row=0, column=3, padx=30, pady=20)
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -861,6 +971,7 @@ y_range_label.grid(row=1, column=3)
 y_range_input.grid(row=1, column=4, padx=10)
 
 plot_range_btn.grid(row=1, column=5)
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # dodawanie frame'a z obliczeniami
 
@@ -886,8 +997,6 @@ def draw_plot(canvas, title=None):
 
 
 # funkcja usuwająca wykres
-
-
 def remove_plot():
     global canvas
     if canvas:
@@ -895,8 +1004,6 @@ def remove_plot():
         canvas = None
 
 # funkcja generująca wykres funkcji liniowej lub kwadratowej
-
-
 def generate_li_sq_plot(type_function, a, b, c, x_range, y_range):
 
     x_range = float(x_range)
@@ -933,6 +1040,7 @@ def generate_li_sq_plot(type_function, a, b, c, x_range, y_range):
 
     canvas = FigureCanvasTkAgg(figure, master=root)
     canvas.draw()
+
     draw_plot(canvas)
 
 
@@ -956,16 +1064,19 @@ def generate_polynomial_plot(coefficients, x_range, y_range):
     plot.axvline(0, color='black', linewidth=0.5)
     global canvas
     if canvas:
-        remove_plot()  # Usunięcie poprzedniego wykresu
+        remove_plot()
 
     canvas = FigureCanvasTkAgg(figure, master=root)
     canvas.draw()
     draw_plot(canvas)
 
-#Rysowanie funkcji trygonometrycznych  
-def generate_trigonometric_plot(trig_function):
-    
-    x = np.linspace(-2*np.pi, 2*np.pi, 1000)
+# funkcja generująca wykres f trygonometrycznych
+def generate_trigonometric_plot(trig_function, xmin=None, xmax=None):
+    if xmin is None:
+        xmin=-2*np.pi
+    if xmax is None:
+        xmax=2*np.pi
+    x = np.linspace(xmin, xmax, 1000)
     if trig_function == "sinus":
         y = np.sin(x)
         title = "Wykres funkcji sinus"
@@ -974,16 +1085,14 @@ def generate_trigonometric_plot(trig_function):
         y = np.cos(x)
         title = "Wykres funkcji cosinus"
         plot_function = np.cos
-    elif trig_function == "tanges":
-        x_values = np.linspace(-2*np.pi, 2*np.pi, 1000)
-        y = np.tan(x_values)
+    elif trig_function == "tangens":
+        y = np.tan(x)
         title = "Wykres funkcji tangens"
-        color = 'blue' 
-    elif trig_function == "cotanges":
-        x_values = np.linspace(-2*np.pi, 2*np.pi, 1000)
-        y = 1 / np.tan(x_values)
+        color = 'blue'
+    elif trig_function == "cotangens":
+        y = 1 / np.tan(x)
         title = "Wykres funkcji cotangens"
-        color = 'blue'  
+        color = 'blue'
 
     figure = Figure(figsize=(5, 4), dpi=100)
     plot = figure.add_subplot(111)
@@ -1014,15 +1123,6 @@ def generate_trigonometric_plot(trig_function):
     canvas = FigureCanvasTkAgg(figure, master=root)  
     canvas.draw()
     draw_plot(canvas, title=title)
-    hide_frame(frame_plot_range)
-
-
-
-
-
-
-
-
 
 # ukrywanie frame'ów po rozpoczęciu programu
 hide_frame(frame_linear_input)
